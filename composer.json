@@ -1,0 +1,12 @@
+{
+    "name": "commandstring/jsondb",
+    "description": "An easier way to use JSON for a database",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "CommandString\\JsonDb\\": "src/",
+            "Project\\": "project/"
+        }
+    }
+}
