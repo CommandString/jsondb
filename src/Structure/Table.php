@@ -10,10 +10,9 @@ abstract class Table implements JsonSerializable {
     protected static string $name;
     protected static string $fileLocation;
     protected static array $columns = [];
-    protected static int $encoderFlags = 0;
     protected array $rows = [];
 
-    public function __construct() {
+    public function __construct(protected int $encoderFlags = 0) {
         if (!file_exists(static::$fileLocation)) {
             return;
         }
@@ -21,6 +20,16 @@ abstract class Table implements JsonSerializable {
         foreach ($this->getJson() as $id => $values) {
             $this->rows[$id] = new Row($this, $id, $values);
         }
+    }
+
+    public static function getName(): string
+    {
+        return static::$name;
+    }
+
+    public static function getFileLocation(): string
+    {
+        return static::$fileLocation;
     }
 
     private function getJson(): array
@@ -70,7 +79,7 @@ abstract class Table implements JsonSerializable {
 
     private function exportRows(): void
     {
-        file_put_contents(static::$fileLocation, json_encode($this, static::$encoderFlags));
+        file_put_contents(static::$fileLocation, json_encode($this, $this->encoderFlags));
     }
 
     public function getRows(): array
