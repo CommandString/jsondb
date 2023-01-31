@@ -5,8 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "CommandString\\JsonDb\\": "src/",
-            "Project\\": "project/"
+            "CommandString\\JsonDb\\": "src/"
         }
     }
 }
