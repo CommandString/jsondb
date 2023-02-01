@@ -2,6 +2,8 @@
 
 namespace CommandString\JsonDb\Structure;
 
+use CommandString\JsonDb\Exceptions\ColumnNameAlreadyTaken;
+use CommandString\JsonDb\Exceptions\InvalidValue;
 use LogicException;
 
 abstract class Column {
@@ -9,20 +11,29 @@ abstract class Column {
     protected static string                 $name;
     protected static array                  $enumValues = [];
     protected static string|int|float|null  $default;
-    protected static bool $nullable =       false;
+    protected static bool                   $nullable = false;
+    protected static bool                   $unique = false;
 
-    public static function verifyData(DataTypes $type, mixed $value): bool
+    /**
+     * @param DataTypes $type
+     * @param string|int|float|null $value
+     * @throws InvalidValue
+     * @return void
+     */
+    public static function verifyData(DataTypes $type, string|int|float|null $value): void
     {
         if (is_null($value) && static::$nullable) {
-            return true;
+            return;
         }
         
         if ($type !== DataTypes::ENUM) {
             $functionName = "is_$type->value";
-            return $functionName($value);
+            if (!$functionName($value)) {
+                throw new InvalidValue(static::class, $value, $type);
+            }
+        } else if (!in_array($value, static::$enumValues)) {
+            throw new InvalidValue(static::class, $value, $type);
         }
-
-        return in_array($value, static::$enumValues);
     }
 
     public static function getEnumValues(): array
@@ -35,15 +46,15 @@ abstract class Column {
         return static::$type;
     }
 
+    
     public static function getName(): string
     {
-        $name = strtolower(static::$name);
+        return strtolower(static::$name);
+    }
 
-        if ($name === "id") {
-            throw new LogicException("Column name ID is already taken");
-        }
-
-        return $name;
+    public static function isUnique(): bool
+    {
+        return static::$unique;
     }
 
     public static function isNullable(): bool

@@ -2,7 +2,8 @@
 
 namespace CommandString\JsonDb\Structure;
 
-use InvalidArgumentException;
+use CommandString\JsonDb\Exceptions\UniqueRowViolation;
+use CommandString\JsonDb\Query\Operators;
 use JsonSerializable;
 use LogicException;
 
@@ -24,8 +25,10 @@ class Row implements JsonSerializable {
     {
         $column = $this->table::getColumn($name);
 
-        if (!$column::verifyData($column::getType(), $value)) {
-            throw new InvalidArgumentException("This not a valid value for this column");
+        $column::verifyData($column::getType(), $value);
+            
+        if ($column::isUnique() && !empty($this->table->newQuery()->whereAnd($column::getName(), Operators::EQUAL_TO, $value)->execute())) {
+            throw new UniqueRowViolation($column, $value);
         }
 
         $this->values[$name] = $value;

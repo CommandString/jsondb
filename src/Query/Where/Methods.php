@@ -2,6 +2,7 @@
 
 namespace CommandString\JsonDb\Query\Where;
 
+use CommandString\JsonDb\Exceptions\ColumnDoesNotExist;
 use CommandString\JsonDb\Query\Operators;
 
 trait Methods {
@@ -10,6 +11,10 @@ trait Methods {
     private function where(string $columnName, Operators $operator, array|string|int|float|null $value, Types $type): self
     {
         $that = clone $this;
+
+        if (is_null($that->table->getColumn($columnName))) {
+            throw new ColumnDoesNotExist($columnName, $that->table);
+        }
 
         $that->wheres[] = new Where($columnName, $operator, $value, $type);
         return $that;
