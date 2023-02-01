@@ -9,8 +9,8 @@ use LogicException;
 abstract class Table implements JsonSerializable {
     protected static string $name;
     protected static string $fileLocation;
-    protected static array $columns = [];
-    protected array $rows = [];
+    protected static array  $columns = [];
+    protected array         $rows = [];
 
     public function __construct(protected int $encoderFlags = 0) {
         if (!file_exists(static::$fileLocation)) {
@@ -48,6 +48,8 @@ abstract class Table implements JsonSerializable {
 
     public static function getColumn(string $columnName): ?string
     {
+        $columnName = strtolower($columnName);
+
         foreach (static::$columns as $column) {
             if (!is_subclass_of($column, Column::class)) {
                 throw new LogicException("$column is not a valid column.");
@@ -96,6 +98,5 @@ abstract class Table implements JsonSerializable {
         $this->rows[$row->getId()] = $row;
 
         $this->exportRows();
-    }
-    
+    }    
 }
