@@ -19,6 +19,7 @@ abstract class Table implements JsonSerializable {
 
         foreach ($this->getJson() as $id => $values) {
             $this->rows[$id] = new Row($this, $id, $values);
+            $this->rows[$id]->jsonSerialize();
         }
     }
 
