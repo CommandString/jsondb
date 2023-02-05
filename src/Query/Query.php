@@ -41,6 +41,8 @@ class Query {
                 case Operators::IN:
                     $matches = in_array($rowValue, $whereValue);
                     break;
+                case Operators::NOT_EQUAL_TO:
+                    $matches = ($rowValue !== $whereValue);
             }
 
             if ($where->type === Where\Types::OR && $matches) {
