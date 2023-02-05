@@ -50,7 +50,7 @@ use CommandString\JsonDb\Structure\DataTypes;
 
 class YourColumn extends Column {
     protected static DataTypes              $type = DataTypes::STRING;
-    protected static string                 $name = "YourColumn";
+    protected static string                 $name = "yourcolumn";
     protected static array                  $enumValues = [];
     protected static string|int|float|null  $default;
     protected static bool                   $nullable = false;
@@ -59,3 +59,37 @@ class YourColumn extends Column {
 ```
 
 Create a class that extends `CommandString\JsonDb\Structure\Column` then add the properties shown above. The available DataTypes are string, int, float, and enum. If the type is enum then make sure to add the values this column can be inside the enumValues array.
+
+## Special Notes
+1. I would recommend adding magic methods and public constants to your classes to take advantage of intellesense while coding, checkout the TestDb for an example
+2. Column and Table names will always be lowercased, so I would recommend having them lowercased by default to prevent any confusion.
+
+# Creating Rows
+
+```php
+$db = new YourDatabase; // you can also pass JSON encoder flags into the constructor
+
+$row = $db->yourtable->newRow();
+
+$row->setColumn($db->yourtable::COLUMN_NAME, "<value>") // you can pass a string for the column name but I recommend having constants has mentioned earlier
+
+$row = $row->store(); // returns that same row but this is associated to specific point in the JSON file
+```
+
+# Fetching rows
+
+```php
+/**
+ * @var Row[]
+ */
+$results = $db->yourtable->newQuery()->whereAnd($db->yourtable::COLUMN_NAME, Operators::EQUAL_TO, "<value>")->execute();
+```
+
+# Updating rows
+```php
+$row = $results[0];
+
+$row->setColumn($db->yourtable::COLUMN_NAME, "<new value>");
+
+$row->store(); // updated the row
+```
