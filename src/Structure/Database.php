@@ -24,7 +24,7 @@ abstract class Database {
         }
     }
 
-    public function __get(string $name): mixed
+    public function __get(string $name): ?Table
     {
         return $this->getTable($name);
     }
